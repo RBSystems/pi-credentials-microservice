@@ -216,14 +216,11 @@ const (
 	website = "https://echo.labstack.com"
 	// http://patorjk.com/software/taag/#p=display&f=Small%20Slant&t=Echo
 	banner = `
-   ____    __
-  / __/___/ /  ___
- / _// __/ _ \/ _ \
-/___/\__/_//_/\___/ %s
-High performance, minimalist Go web framework
-%s
-____________________________________O/_______
-                                    O\
+	        __  ___                 __
+	  _____/  |/  /___  ____  _____/ /____  _____
+	 / ___/ /|_/ / __ \/ __ \/ ___/ __/ _ \/ ___/
+	/ /__/ /  / / /_/ / / / (__  ) /_/  __/ /
+	\___/_/  /_/\____/_/ /_/____/\__/\___/_/
 `
 )
 
