@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	db "byuoitav/pi-credential-store/dynamoDB"
-	km "byuoitav/pi-credential-store/kms"
+	db "github.com/byuoitav/pi-credentials-microservice/dynamoDB"
+	km "github.com/byuoitav/pi-credentials-microservice/kms"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/byuoitav/authmiddleware"
