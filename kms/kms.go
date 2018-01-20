@@ -52,3 +52,8 @@ func EncryptDbEntry(entry *structs.Entry) (*k.EncryptOutput, *k.EncryptOutput, e
 
 	return encryptedHost, encryptedPassword, nil
 }
+
+func DecryptDbEntry(hostname string, toDecrypt *dynamodb.AttributeItem) (*structs.Entry, error) {
+
+	return &structs.Entry{}, nil
+}

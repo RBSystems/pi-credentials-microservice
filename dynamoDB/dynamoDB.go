@@ -50,10 +50,11 @@ func AddEntry(entry *structs.Entry) (*db.PutItemOutput, error) {
 	return dbClient.PutItem(input)
 }
 
-func GetEntry(hostname string) (*db.GetItemOutput, error) {
+func GetEntry(hostname string) (*structs.Entry, error) {
 
 	log.Printf("%s", color.HiGreenString("[dynamodb] collecting indices for host %s", hostname))
 
+	//build request struct
 	input := &db.GetItemInput{
 		Key: map[string]*db.AttributeValue{
 			"hostname": {
@@ -63,5 +64,13 @@ func GetEntry(hostname string) (*db.GetItemOutput, error) {
 		TableName: aws.String(os.Getenv("AWS_DYNAMO_TABLE")),
 	}
 
-	return dbClient.GetItem(input)
+	//get entry
+	result, err := dbClient.GetItem(input)
+	if err != nil {
+		return &structs.Entry{}, err
+	}
+
+	//decrypt entry
+	return kms.DecryptDbEntry(hostname, result.Item["hostname"])
+
 }
