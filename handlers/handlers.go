@@ -16,17 +16,22 @@ func CreateCredentials(context echo.Context) error {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	err = dynamoDB.AddEntry(&entry)
+	result, err := dynamoDB.AddEntry(&entry)
 	if err != nil {
 		return context.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	return context.JSON(http.StatusOK, entry)
+	return context.JSON(http.StatusOK, result)
 }
 
 func RetrieveCredentials(context echo.Context) error {
 
-	return context.JSON(http.StatusOK, "success")
+	result, err := dynamoDB.GetEntry(context.Param("hostname"))
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
+
+	return context.JSON(http.StatusOK, result)
 }
 
 func UpdateCredentials(context echo.Context) error {

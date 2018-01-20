@@ -7,7 +7,8 @@ import (
 	db "github.com/byuoitav/pi-credentials-microservice/dynamoDB"
 	km "github.com/byuoitav/pi-credentials-microservice/kms"
 
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/aws"
+	ses "github.com/aws/aws-sdk-go/aws/session"
 	"github.com/byuoitav/authmiddleware"
 	"github.com/byuoitav/pi-credentials-microservice/handlers"
 	"github.com/fatih/color"
@@ -22,9 +23,9 @@ func main() {
 	log.Printf("%s", color.HiGreenString("Starting pi credentials microservice"))
 
 	//start AWS clients
-	awsSession := session.Must(session.NewSession())
-	db.Init(session)
-	km.Init(session)
+	awsSession := ses.Must(ses.NewSession(&aws.Config{Region: aws.String("us-west-2")}))
+	km.Init(awsSession)
+	db.Init(awsSession)
 
 	//start web server
 	router := echo.New()

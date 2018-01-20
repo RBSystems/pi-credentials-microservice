@@ -1,13 +1,14 @@
 package dynamoDB
 
 import (
-	"errors"
-	"fmt"
 	"log"
+	"os"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	db "github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/byuoitav/pi-credentials-microservice/kms"
+	"github.com/byuoitav/pi-credentials-microservice/structs"
 	"github.com/fatih/color"
 )
 
@@ -18,29 +19,49 @@ func Init(session *session.Session) {
 	dbClient = db.New(session)
 }
 
-func AddEntry(entry *Entry) error {
+//encrypts the password field in an entry
+//writes the hostname and encrypted password to DB
+//duplicate primary keys overwrite indices (?)
+func AddEntry(entry *structs.Entry) (*db.PutItemOutput, error) {
 
-	//encrypt entry
-	username, password, err := kms.EncryptEntry(entry)
+	log.Printf("%s", color.HiGreenString("[dynamodb] adding entry for host %s", entry.Hostname))
+
+	log.Printf("[dynamodb] encrypting entry...")
+	_, password, err := kms.EncryptDbEntry(entry)
 	if err != nil {
-		return err
+		return &db.PutItemOutput{}, err
 	}
 
 	//add entry to DB
+	log.Printf("[dynamodb] building DB input struct...")
 	input := &db.PutItemInput{
 		Item: map[string]*db.AttributeValue{
-			string(username): {
-				B: password,
+			"hostname": {
+				S: &entry.Hostname,
+			},
+			"password": {
+				B: password.CiphertextBlob,
 			},
 		},
+		TableName: aws.String(os.Getenv("AWS_DYNAMO_TABLE")),
 	}
 
-	result, err := dbClient.PutItem(input)
-	if err != nil {
-		msg := fmt.Sprintf("item not added: %s", err.Error())
-		log.Printf("%s", color.HiRedString("[dynamoDB] %s", msg))
-		return errors.New(msg)
+	log.Printf("[dynamodb] adding struct to DB...")
+	return dbClient.PutItem(input)
+}
+
+func GetEntry(hostname string) (*db.GetItemOutput, error) {
+
+	log.Printf("%s", color.HiGreenString("[dynamodb] collecting indices for host %s", hostname))
+
+	input := &db.GetItemInput{
+		Key: map[string]*db.AttributeValue{
+			"hostname": {
+				S: &hostname,
+			},
+		},
+		TableName: aws.String(os.Getenv("AWS_DYNAMO_TABLE")),
 	}
 
-	return nil
+	return dbClient.GetItem(input)
 }
