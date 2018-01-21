@@ -9,51 +9,49 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	k "github.com/aws/aws-sdk-go/service/kms"
-	"github.com/byuoitav/pi-credentials-microservice/structs"
 	"github.com/fatih/color"
 )
 
 var kmsClient *k.KMS
 
+//creates the KMS client given an AWS session
 func Init(session *session.Session) {
 
 	kmsClient = k.New(session)
 }
 
-func EncryptDbEntry(entry *structs.Entry) (*k.EncryptOutput, *k.EncryptOutput, error) {
+//checks out the KMS key stored in AWS_KMS_KEY_ID and
+//encrypts a string
+//clients must call Init() before using
+func Encrypt(secret string) ([]byte, error) {
 
-	hostInput := &k.EncryptInput{
+	input := &k.EncryptInput{
 		KeyId:     aws.String(os.Getenv("AWS_KMS_KEY_ID")),
-		Plaintext: []byte(entry.Hostname),
+		Plaintext: []byte(secret),
 	}
 
-	passwordInput := &k.EncryptInput{
-		KeyId:     aws.String(os.Getenv("AWS_KMS_KEY_ID")),
-		Plaintext: []byte(entry.Password),
-	}
-
-	encryptedHost, err := kmsClient.Encrypt(hostInput)
+	result, err := kmsClient.Encrypt(input)
 	if err != nil {
-		msg := fmt.Sprintf("failed to encrypt hostname: %s", err.Error())
+		msg := fmt.Sprintf("failed to encrypt data: %s", err.Error())
 		log.Printf("%s", color.HiRedString("[kms] %s", msg))
-		return &k.EncryptOutput{}, &k.EncryptOutput{}, errors.New(msg)
+		return []byte{}, errors.New(msg)
 	}
 
-	log.Printf("result: %s", encryptedHost)
-
-	encryptedPassword, err := kmsClient.Encrypt(passwordInput)
-	if err != nil {
-		msg := fmt.Sprintf("failed to encrypt hostname: %s", err.Error())
-		log.Printf("%s", color.HiRedString("[kms] %s", msg))
-		return &k.EncryptOutput{}, &k.EncryptOutput{}, errors.New(msg)
-	}
-
-	log.Printf("result: %s", encryptedPassword)
-
-	return encryptedHost, encryptedPassword, nil
+	return result.CiphertextBlob, nil
 }
 
-func DecryptDbEntry(hostname string, toDecrypt *dynamodb.AttributeItem) (*structs.Entry, error) {
+func Decrypt(secret []byte) (string, error) {
 
-	return &structs.Entry{}, nil
+	input := &k.DecryptInput{
+		CiphertextBlob: secret,
+	}
+
+	result, err := kmsClient.Decrypt(input)
+	if err != nil {
+		msg := fmt.Sprintf("failed to encrypt data: %s", err.Error())
+		log.Printf("%s", color.HiRedString("[kms] %s", msg))
+		return "", errors.New(msg)
+	}
+
+	return string(result.Plaintext), nil
 }

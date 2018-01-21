@@ -1,6 +1,8 @@
 package dynamoDB
 
 import (
+	"errors"
+	"fmt"
 	"log"
 	"os"
 
@@ -26,8 +28,9 @@ func AddEntry(entry *structs.Entry) (*db.PutItemOutput, error) {
 
 	log.Printf("%s", color.HiGreenString("[dynamodb] adding entry for host %s", entry.Hostname))
 
+	//encrypt password
 	log.Printf("[dynamodb] encrypting entry...")
-	_, password, err := kms.EncryptDbEntry(entry)
+	cipherText, err := kms.Encrypt(entry.Password)
 	if err != nil {
 		return &db.PutItemOutput{}, err
 	}
@@ -40,7 +43,7 @@ func AddEntry(entry *structs.Entry) (*db.PutItemOutput, error) {
 				S: &entry.Hostname,
 			},
 			"password": {
-				B: password.CiphertextBlob,
+				B: cipherText,
 			},
 		},
 		TableName: aws.String(os.Getenv("AWS_DYNAMO_TABLE")),
@@ -65,12 +68,26 @@ func GetEntry(hostname string) (*structs.Entry, error) {
 	}
 
 	//get entry
+	log.Printf("[dynamodb] searching for item...")
 	result, err := dbClient.GetItem(input)
 	if err != nil {
-		return &structs.Entry{}, err
+		msg := fmt.Sprintf("entry not found: %s", err.Error())
+		log.Printf("%s", color.HiRedString("[dynamodb] %s", msg))
+		return &structs.Entry{}, errors.New(msg)
 	}
 
 	//decrypt entry
-	return kms.DecryptDbEntry(hostname, result.Item["hostname"])
+	log.Printf("[dynamodb] decrypting password...")
+	plaintext, err := kms.Decrypt(result.Item["password"].B)
+	if err != nil {
+		msg := fmt.Sprintf("failed to decrypt password: %s", err.Error())
+		log.Printf("%s", color.HiRedString("[dynamodb] %s", msg))
+		return &structs.Entry{}, errors.New(msg)
+	}
+
+	return &structs.Entry{
+		Hostname: hostname,
+		Password: plaintext,
+	}, nil
 
 }
