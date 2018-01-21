@@ -1,4 +1,5 @@
 # Basic Server Password Management
+
 ## Installation:
 ```go get github.com/byuoitav/pi-credential-store```
 
@@ -13,21 +14,21 @@ as a primary key and `password` as a secondary global index
 
 # How it's configured in AWS
 
-##KMS
-*Alias
+## KMS
+* Alias
 	`credstash`
 
-*Tag Key
+* Tag Key
 	`raspi`
 
-*Tag Value
+* Tag Value
 	`creds`
 
-*IAM Administrators
+* IAM Administrators
 	`PowerUser`
 
-*IAM Users
+* IAM Users
 	* `PowerUser`
 	* `aws-elasticbeanstalk-service-role`
 
-##DynamoDB
+## DynamoDB
