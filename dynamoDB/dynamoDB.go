@@ -26,7 +26,7 @@ func Init(session *session.Session) {
 //duplicate primary keys overwrite indices (?)
 func AddEntry(entry *structs.Entry) (*db.PutItemOutput, error) {
 
-	log.Printf("%s", color.HiGreenString("[dynamodb] adding entry for host %s", entry.Hostname))
+	log.Printf("%s", color.HiGreenString("[dynamodb] adding entry for host %s...", entry.Hostname))
 
 	//encrypt password
 	log.Printf("[dynamodb] encrypting entry...")
@@ -55,7 +55,7 @@ func AddEntry(entry *structs.Entry) (*db.PutItemOutput, error) {
 
 func GetEntry(hostname string) (*structs.Entry, error) {
 
-	log.Printf("%s", color.HiGreenString("[dynamodb] collecting indices for host %s", hostname))
+	log.Printf("%s", color.HiGreenString("[dynamodb] collecting indices for host %s...", hostname))
 
 	//build request struct
 	input := &db.GetItemInput{
@@ -90,4 +90,33 @@ func GetEntry(hostname string) (*structs.Entry, error) {
 		Password: plaintext,
 	}, nil
 
+}
+
+//deletes item
+//multiple deletes does not result in error
+func DeleteEntry(hostname string) error {
+
+	log.Printf("%s", color.HiGreenString("[dynamodb] deleting indices for host: %s", hostname))
+
+	//build request struct
+	log.Printf("[dynamodb] building request struct...")
+	input := &db.DeleteItemInput{
+		Key: map[string]*db.AttributeValue{
+			"hostname": {
+				S: &hostname,
+			},
+		},
+		TableName: aws.String(os.Getenv("AWS_DYNAMO_TABLE")),
+	}
+
+	//remove entry
+	log.Printf("[dynamodb] removing host...")
+	_, err := dbClient.DeleteItem(input)
+	if err != nil {
+		msg := fmt.Sprintf("item not deleted: %s", err.Error())
+		log.Printf("%s", color.HiRedString("[dynamodb] %s", msg))
+		return errors.New(msg)
+	}
+
+	return nil
 }

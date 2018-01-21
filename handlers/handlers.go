@@ -34,12 +34,12 @@ func RetrieveCredentials(context echo.Context) error {
 	return context.JSON(http.StatusOK, result)
 }
 
-func UpdateCredentials(context echo.Context) error {
-
-	return context.JSON(http.StatusOK, "success")
-}
-
 func DeleteCredentials(context echo.Context) error {
+
+	err := dynamoDB.DeleteEntry(context.Param("hostname"))
+	if err != nil {
+		return context.JSON(http.StatusBadRequest, err.Error())
+	}
 
 	return context.JSON(http.StatusOK, "success")
 }

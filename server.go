@@ -40,7 +40,6 @@ func main() {
 	//credential CRUD
 	secure.POST("/devices/:hostname", handlers.CreateCredentials)
 	secure.GET("/devices/:hostname", handlers.RetrieveCredentials)
-	secure.PUT("/devices/:hostname", handlers.UpdateCredentials)
 	secure.DELETE("/devices/:hostname", handlers.DeleteCredentials)
 
 	server := http.Server{
