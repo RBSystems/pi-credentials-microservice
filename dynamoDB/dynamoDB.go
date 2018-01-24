@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	db "github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/byuoitav/password-utility/structs"
 	"github.com/byuoitav/pi-credentials-microservice/kms"
-	"github.com/byuoitav/pi-credentials-microservice/structs"
 	"github.com/fatih/color"
 )
 
@@ -78,17 +78,22 @@ func GetEntry(hostname string) (*structs.Entry, error) {
 
 	//decrypt entry
 	log.Printf("[dynamodb] decrypting password...")
-	plaintext, err := kms.Decrypt(result.Item["password"].B)
-	if err != nil {
-		msg := fmt.Sprintf("failed to decrypt password: %s", err.Error())
-		log.Printf("%s", color.HiRedString("[dynamodb] %s", msg))
-		return &structs.Entry{}, errors.New(msg)
+	if cipherText, ok := result.Item["password"]; ok {
+
+		plaintext, err := kms.Decrypt(cipherText.B)
+		if err != nil {
+			msg := fmt.Sprintf("failed to decrypt password: %s", err.Error())
+			log.Printf("%s", color.HiRedString("[dynamodb] %s", msg))
+			return &structs.Entry{}, errors.New(msg)
+		}
+
+		return &structs.Entry{
+			Hostname: hostname,
+			Password: plaintext,
+		}, nil
 	}
 
-	return &structs.Entry{
-		Hostname: hostname,
-		Password: plaintext,
-	}, nil
+	return &structs.Entry{}, errors.New("hostname not present in database")
 
 }
 

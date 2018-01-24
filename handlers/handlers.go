@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/byuoitav/password-utility/structs"
 	"github.com/byuoitav/pi-credentials-microservice/dynamoDB"
-	"github.com/byuoitav/pi-credentials-microservice/structs"
 	"github.com/labstack/echo"
 )
 
