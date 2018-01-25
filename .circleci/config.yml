@@ -11,6 +11,8 @@ jobs:
             - run:
                 command: gvt fetch github.com/byuoitav/authmiddleware
             - run:
+                command: gvt fetch github.com/byuoitav/password-utility
+            - run:
                 command: make docker
                   
 
