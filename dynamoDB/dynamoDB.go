@@ -125,3 +125,7 @@ func DeleteEntry(hostname string) error {
 
 	return nil
 }
+
+func GetBatchEntries(hostnames []string) ([]*structs.Entry, error) {
+	return []*structs.Entry{}, nil
+}
