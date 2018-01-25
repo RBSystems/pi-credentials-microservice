@@ -2,9 +2,6 @@ version: 2
 jobs:
     build:
         working_directory: /go/src/github.com/byuoitav/raspi-credentials-microservice
-        docker:
-            - image: amd64/alpine
-            - maintainer: Daniel Randall <danny_randall@byu.edu>
         steps:
             - checkout
             - run:
