@@ -1,20 +1,18 @@
 version: 2
 jobs:
     build:
+        docker:
+            - image: golang:1.9.2
+
         working_directory: /go/src/github.com/byuoitav/pi-credentials-microservice
-        machine:
-            services:
-                - docker
+
         steps:
             - checkout
             - run: go get github.com/byuoitav/pi-credentials-microservice
-            - run:
-                command: go get -u github.com/FiloSottile/gvt
-            - run:
-                command: gvt fetch github.com/byuoitav/authmiddleware
-            - run:
-                command: gvt fetch github.com/byuoitav/password-utility
-            - run:
-                command: make docker
-                  
+            - run: go get -u github.com/FiloSottile/gvt
+            - run: gvt fetch github.com/byuoitav/authmiddleware
+            - run: gvt fetch github.com/byuoitav/password-utility
+            - setup_remote_docker:     
+                version: 17.05.0-ce                  
 
+            - make docker
