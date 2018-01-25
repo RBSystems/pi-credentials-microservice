@@ -1,7 +1,7 @@
 version: 2
 jobs:
     build:
-        working_directory: /go/src/github.com/byuoitav/raspi-credentials-microservice
+        working_directory: /go/src/github.com/byuoitav/pi-credentials-microservice
         docker:
             - image: circleci/golang:1.9
         steps:
