@@ -7,6 +7,7 @@ jobs:
                 - docker
         steps:
             - checkout
+            - run: go get github.com/byuoitav/pi-credentials-microservice
             - run:
                 command: go get -u github.com/FiloSottile/gvt
             - run:
