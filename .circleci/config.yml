@@ -7,6 +7,10 @@ jobs:
         steps:
             - checkout
             - run:
+                command: go get -u github.com/FiloSottile/gvt
+            - run:
+                command: gvt fetch github.com/byuoitav/authmiddleware
+            - run:
                 command: make docker
                   
 
