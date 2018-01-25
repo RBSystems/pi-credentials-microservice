@@ -1,0 +1,5 @@
+version: 2
+jobs:
+    build:
+        working_directory: /go/src/github.com/byuoitav/raspi-credentials-microservice
+        -run: make 
