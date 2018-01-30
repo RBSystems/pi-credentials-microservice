@@ -12,4 +12,4 @@ jobs:
             - setup_remote_docker:     
                 version: 17.05.0-ce                  
 
-            - run: make docker
+            - run: cd pi-credentials-microservice && make docker
