@@ -9,8 +9,6 @@ jobs:
         steps:
             - run: go get github.com/byuoitav/pi-credentials-microservice
             - run: go get -u github.com/FiloSottile/gvt
-            - run: gvt fetch github.com/byuoitav/authmiddleware
-            - run: gvt fetch github.com/byuoitav/password-utility
             - setup_remote_docker:     
                 version: 17.05.0-ce                  
 
