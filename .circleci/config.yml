@@ -22,4 +22,4 @@ jobs:
                     mv /tmp/docker/* /usr/bin
         
 
-            - run: cd pi-credentials-microservice && make docker
+            - run: make docker
