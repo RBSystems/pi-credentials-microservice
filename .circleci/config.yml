@@ -7,7 +7,6 @@ jobs:
         working_directory: /go/src/github.com/byuoitav/pi-credentials-microservice
 
         steps:
-            - checkout
             - run: go get github.com/byuoitav/pi-credentials-microservice
             - run: go get -u github.com/FiloSottile/gvt
             - run: gvt fetch github.com/byuoitav/authmiddleware
@@ -15,4 +14,4 @@ jobs:
             - setup_remote_docker:     
                 version: 17.05.0-ce                  
 
-            - make docker
+            - run: make docker
