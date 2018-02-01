@@ -1,4 +1,4 @@
-FROM amd64/alpine
+FROM byuoitav/amd64-alpine
 MAINTAINER Daniel Randall <danny_randall@byu.edu>
 
 ARG NAME
