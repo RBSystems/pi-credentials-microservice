@@ -2,7 +2,7 @@ version: 2
 jobs:
     build:
         machine: true
-        working_directory: ${HOME}/go/src/github.com/byuoitav
+        working_directory: ${HOME}/go/src/github.com/byuoitav/pi-credentials-microservice
         steps:
             - checkout
             - run: go get github.com/byuoitav/pi-credentials-microservice
