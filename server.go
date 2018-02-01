@@ -52,6 +52,6 @@ func main() {
 
 func Health(context echo.Context) error {
 
-	return context.JSON(http.StatusOK, "hello from cMonster")
+	return context.JSON(http.StatusOK, "hello from cmonster")
 
 }
