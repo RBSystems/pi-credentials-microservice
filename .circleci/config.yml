@@ -4,6 +4,8 @@ jobs:
         machine: true
         working_directory: /go/src/github.com/byuoitav
         steps:
-            - checkout: go get github.com/byuoitav/pi-credentials-microservice
+            - checkout
+            - run: go get github.com/byuoitav/pi-credentials-microservice
+            - build
             - run: cd pi-credentials-microservice 
             - run: make docker
