@@ -1,11 +1,9 @@
 version: 2
 jobs:
     build:
-        docker:
-            - image: circleci/golang:1.9.3
-
-        working_directory: /go/src/github.com/byuoitav
-
+        machine: true
+        working_directory: ~/go/src/github.com/byuoitav
         steps:
-            - run: go get github.com/byuoitav/pi-credentials-microservice
-            - run: cd pi-credentials-microservice && make docker
+            - checkout: go get github.com/byuoitav/pi-credentials-microservice
+            - run: cd pi-credentials-microservice 
+            - run: make docker
