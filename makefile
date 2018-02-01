@@ -1,7 +1,7 @@
 NAME := $(shell basename "$(PWD)")
 
 docker: $(NAME)
-	docker build --build-arg NAME=$(NAME) -f dockerfile -t byuoitav/pi-credentials-microservice:latest .
+	docker build --build-arg NAME=$(NAME) -t byuoitav/pi-credentials-microservice:latest .
 	docker login -u $(DOCKER_USERNAME) -p $(DOCKER_PASSWORD) 
 	docker push byuoitav/pi-credentials-microservice:latest
 
