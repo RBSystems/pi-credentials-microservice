@@ -8,3 +8,4 @@ jobs:
         steps:
             - run: go get github.com/byuoitav/pi-credentials-microservice
             - run: cd pi-credentials-microservice && make docker
+            - run: cd pi-credentials-microservice && ./deploy.sh $CIRCLE_PROJECT_REPONAME $CIRCLE_SHA1
