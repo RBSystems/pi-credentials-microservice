@@ -8,4 +8,5 @@ jobs:
         steps:
             - run: go get github.com/byuoitav/pi-credentials-microservice
             - run: cd pi-credentials-microservice
+            - run: pwd
             - run: make docker
