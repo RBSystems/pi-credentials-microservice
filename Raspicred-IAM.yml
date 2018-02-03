@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources: 
+  RaspicredRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - Effect: "Allow"
+            Principal: 
+              Service: 
+                - "ec2.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AWSElasticBeanstalkWebTier"
+        - "arn:aws:iam::aws:policy/AWSElasticBeanstalkMulticontainerDocker"
+        - "arn:aws:iam::aws:policy/AWSElasticBeanstalkWorkerTier"
+      Path: "/"
+      Policies: 
+        - PolicyName: "raspicredpolicy"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action: 
+                  - "dynamodb:UntagResource"
+                  - "kms:GenerateRandom"
+                  - "dynamodb:ListTables"
+                  - "dynamodb:ListBackups"
+                  - "dynamodb:PurchaseReservedCapacityOfferings"
+                  - "dynamodb:ListTagsOfResource"
+                  - "dynamodb:DescribeTimeToLive"
+                  - "kms:ReEncryptFrom"
+                  - "dynamodb:ListStreams"
+                  - "kms:ListKeys"
+                  - "dynamodb:DescribeReservedCapacityOfferings"
+                  - "dynamodb:TagResource"
+                  - "dynamodb:DescribeReservedCapacity"
+                  - "kms:ListAliases"
+                  - "kms:GenerateDataKey"
+                  - "kms:ReEncryptTo"
+                  - "kms:CreateKey"
+                  - "dynamodb:DescribeLimits"
+                Resource: "*"
+              - Effect: "Allow"
+                Action: 
+                  - "kms:*"
+                  - "dynamodb:*"
+                Resource:
+                  - "arn:aws:kms:us-west-2:194925301021:key/1e414642-b3e4-4076-9a6a-4f1a81831d27"
+                  - "arn:aws:dynamodb:us-west-2:194925301021:table/raspi-cred-store"
+  RaspicredInstanceProfile:
+    Type: "AWS::IAM::InstanceProfile"
+    Properties:
+      Path: "/"
+      Roles:
+        - Ref: "RaspicredRole"
